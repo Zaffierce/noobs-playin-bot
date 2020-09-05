@@ -86,7 +86,7 @@ bot.on("message", message => {
     if (cmd) cmd.run(bot, message, args);
   }
   if (message.channel.id == config.nickname_channel_ID && message.author.id != bot.user.id) {
-    message.guild.members.cache.get(message.author.id).setNickname(message.content));
+    message.guild.members.cache.get(message.author.id).setNickname(message.content);
     message.channel.send(`You've successfully set your RSN to: <@${message.author.id}>`).then(d_msg => d_msg.delete({timeout: 60000}));
   }  
 });
