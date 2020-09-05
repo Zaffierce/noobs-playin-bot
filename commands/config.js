@@ -1,71 +1,114 @@
-    const update = require("../update.json");
-    const fs = require("fs");
+//Requires member to have KICK_MEMBERS permission or else it won't do anything.
+const Discord = require("discord.js")
+const config = require("../config.json");
+const fs = require("fs");
     
-    module.exports.run = async (bot, message, args) => {
+module.exports.run = async (bot, message, args) => {
+  let modRole = message.member.hasPermission('KICK_MEMBERS');
+  if(!modRole) return message.delete();
+
+  let type = args[0];
+  let data = args[1];
+  let embed = new Discord.MessageEmbed()
+  embed.setColor('#76FF33')
+  embed.setTitle('Configuration successfully updated')
+  switch(type) {
+    case 'help':
+      embed.setColor('RED')
+      embed.setTitle('Help:  Updating the configuration')
+      embed.setDescription('This command explains how to update the configurations for the bot.')
+      embed.addFields(
+        {name:"Example", value:`${config.prefix}config [type] [data]\n${config.prefix}config roles #roles\n${config.prefix}config guestrank @guest\n${config.prefix}config list`},
+        {name:"Notes:", value:"● [type] is either `roles`, `rules`, `announcements`, `nickname`, `guest`, or `member`\n● If the guest rank and/or member rank is not @-able, you'll have to fetch the group's ID instead by doing `\\@guest` and then enter that instead."}
+      );
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
+
+    case 'roles':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.roles_channel_ID === data) message.channel.send('An error has occured while trying to run your command.  The existing channel ID matches the inputted ID.');
+      else (!config.roles_channel_ID) 
+        config.roles_channel_ID = data.replace(/\D/g,'');
+      embed.setDescription(`Role Channel: ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
+
+    
+    case 'announcements':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.announcements_channel_ID === data) message.channel.send('An error has occured while trying to run your command.  The existing channel ID matches the inputted ID.');
+      else (!config.announcements_channel_ID)
+        config.announcements_channel_ID = data.replace(/\D/g,'')
+      embed.setDescription(`Announcement Channel:  ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
+      
+    case 'rules':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.rules_channel_ID === data) message.channel.send('An error has occured while trying to run your command.  The existing channel ID matches the inputted ID.');
+      else (!config.rules_channel_ID)
+        config.rules_channel_ID = data.replace(/\D/g,'')
+      embed.setDescription(`Rules Channel: ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
+
+    case 'nickname':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.nickname_channel_ID === data) message.channel.send('An error has occured while trying to run your command.  TThe existing channel ID matches the inputted ID.');
+      else (!config.nickname_channel_ID)
+        config.nickname_channel_ID = data.replace(/\D/g,'')
+      embed.setDescription(`Nickname Channel: ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
         
-    let modRole = message.member.hasPermission('KICK_MEMBERS');
-    if(!modRole) {     
-        message.delete();
-    console.log(message.author.username + " attempted to run a command that they don't have access to!");
-        } else {
-            let type = args[0];
-            if (type === "help") {
-                message.channel.send("**Explanation of config:**\n!noobsconfig [type] [data]\n[type] can be `roles`, `norank`, `rules`, `announcements`\n[data] is the information requested\n\n**EXAMPLES:**\n*!noobsconfig roles [channelID]*\n*!noobsconfig roles 583788262771130372*\n*!noobsconfig norank [role name]*\n*!noobsconfig norank nobody*\n\n**NOTES:**\n- Roles [channelID] is the ID of the channel you want to post the roles command in.\n- Norank [role name] is plain text, don't @ the role.  If it's @nobody, just type nobody.\n")
-            } else {
-                let data = args[1];
-                if (!args[0] || !args[1]) return message.channel.send("Error with the syntax.  Check !noobsconfig help for more information!");
-    
-    
-                if (type === "roles") {
-                    if (!update[type]) update[type] = {
-                        channelID: ""
-                    }
-                    var newID = update[type].channelID = data;
-                    newID;
-                    message.channel.send(`Roles channel ID has been updated to ${newID}`);
-                    console.log(`${message.author.username} just edited the config file.`);
-                    fs.writeFile("update.json", JSON.stringify(update), (err) => {
-                    if (err) console.log(err);
-                    });
-                }
-                if (type === "norank") {
-                    if (!update[type]) update[type] = {
-                        roleName: ""
-                    }
-                    var newroleName = update[type].roleName = data;
-                    newroleName;
-                    message.channel.send(`No rank ID has been updated to ${newroleName}`);
-                    fs.writeFile("update.json", JSON.stringify(update), (err) => {
-                    if (err) console.log(err);
-                    });
-                }
-                if (type === "rules") {
-                    if (!update[type]) update[type] = {
-                        channelID: ""
-                    }
-                    var newID = update[type].channelID = data;
-                    newID;
-                    message.channel.send(`Rules channel ID has been updated to ${newID}`);
-                    console.log(`${message.author.username} just edited the config file.`);
-                    fs.writeFile("update.json", JSON.stringify(update), (err) => {
-                    if (err) console.log(err);
-                    });
-                }
-                if (type === "announcements") {
-                    if (!update[type]) update[type] = {
-                        channelID: ""
-                    }
-                    var newID = update[type].channelID = data;
-                    newID;
-                    message.channel.send(`Rules channel ID has been updated to ${newID}`);
-                    console.log(`${message.author.username} just edited the config file.`);
-                    fs.writeFile("update.json", JSON.stringify(update), (err) => {
-                    if (err) console.log(err);
-                    });
-                }
-            }
+    case 'guest':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.guest_rank === data) message.channel.send('An error has occured while trying to run your command.  This role is already matches the inputted ID.');
+      else (!config.guest_rank)
+        config.guest_rank = data.replace(/\D/g,'');
+      embed.setDescription(`Guest rank role set to: ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
 
+    case 'member':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.member_rank === data) message.channel.send('An error has occured while trying to run your command.  This role already matches the inputted ID.');
+      else (!config.member_rank)
+        config.member_rank = data.replace(/\D/g,'');
+      embed.setDescription(`Member rank role set to: ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
 
-        }
+    case 'list':
+      embed.setTitle(`Current configuration settings`)
+      embed.addFields(
+        {name:"Roles Channel", value:`<#${config.roles_channel_ID}>`},
+        {name:"Announcements Channel", value:`<#${config.announcements_channel_ID}>`},
+        {name:"Rules Channel", value:`<#${config.rules_channel_ID}>`},
+        {name:"Nickname Channel", value:`<#${config.nickname_channel_ID}>`},
+        {name:"Guest rank name", value:`<@&${config.guest_rank}>`},
+        {name:"Member rank name", value:`<@&${config.member_rank}>`}
+      );
+    break;
 
-    };
+    default:
+      embed.setColor('RED')
+      embed.setTitle(`Configuration Error:`)
+      embed.setDescription(`An error has occured while trying to run your command.  Please run \`${config.prefix}config help\` for more information.`)
+  }
+  return message.channel.send(embed);
+};

@@ -3,245 +3,170 @@ const generalRules = require('../data/generalRules.json');
 const eventRules = require('../data/eventRules.json');
 const promotionRules = require('../data/promotionRules.json');
 const pvmRules = require('../data/pvmRules.json');
-const update = require("../update.json");
+// const update = require("../update.json");
+const config = require("../config.json");
 const fs = require("fs");
 
-    module.exports.run = async (bot, message, args) => {
-        
-    let ruleType = args[0];
-    let ruleNumber = args[1];
-    let ruleText = message.content.split(' ').splice(3).join(' ');
-    let modRole = message.member.hasPermission('KICK_MEMBERS');
-    if(!modRole) {     
-        message.delete();
-        console.log(message.author.username + " attempted to run a command that they don't have access to!");
-        } else {
-            let channel = bot.channels.get(update.rules);
-            let announcements = bot.channels.get(update.announcements);
-            if (ruleType === 'help') {
-                return message.channel.send('**Explanation of editrule**\nnb!editrule [type] [rule#] [ruletext]\n[type] can be `general`, `event`, `promotion`, `pvm`\n[rule#] is the number in order, starting at 1\n[ruletext] is whatever you want the rule to say\n\n**EXAMPLES:**\n*nb!editrule general 1 DO be a dick.*\n*nb!editrule pvm 11 BANDOS - Just alch bandos boots*\n*nb!editrule promotion 1 Smiley faces are super noobs*\n\n**NOTES:**\n- Commands are deleted when ran, but cannot be ran by those who do not have `KICK_MEMBERS` permissions\n- You can add additional rules, but after doing so you must run `!postrules` in the #rules channel.')
-            }
+module.exports.run = async (bot, message, args) => {
 
-            if(!args[0] || !args[1] || !ruleText) { return message.channel.send("Please check your command and try again.\nType !editrule help for more information") }
-            
-            if (ruleType === 'general') {
-                message.delete();
-                if (!generalRules[ruleNumber]) generalRules[ruleNumber] = {
-                    ruleText: "",
-                    ruleNum: "",
-                    messageID: "none"
-                };
-                let wRuleText = generalRules[ruleNumber].ruleText;
-                var newText = generalRules[ruleNumber].ruleText = ruleText;
-                var newNum = generalRules[ruleNumber].ruleNum = ruleNumber;
-                newText;
-                newNum;
+  let ruleType = args[0];
+  let ruleNumber = args[1];
+  let ruleText = message.content.split(' ').splice(3).join(' ');
+  let modRole = message.member.hasPermission('KICK_MEMBERS');
+  let rules = bot.channels.cache.get(config.rules_channel_ID);
+  let announcements = bot.channels.cache.get(config.announcements_channel_ID);
 
-                if (generalRules[ruleNumber].messageID === "none") {
-                    const embed = new Discord.RichEmbed()
-                        .setColor(`#76FF33`)
-                        .addField(`General Rule #${ruleNumber}`, `${ruleText}`);
-                    message.channel.send("Adding a new rule.  This will not appear until !postrules has been ran.");
-                    message.channel.send(embed);
-                    console.log(`${message.author.username} just edited General Rule #${ruleNumber}.`);
-                    fs.writeFile("data/generalRules.json", JSON.stringify(generalRules), (err) => {
-                    if (err) console.log(err);
-                    });
-                } else {
-                const oldEmbed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`General Rule #${ruleNumber}`,`${wRuleText}`);                    
-                announcements.send("A change has been made to the rules!");
-                announcements.send("**OLD RULE**");
-                announcements.send(oldEmbed).then(function() {
-                    var newText = generalRules[ruleNumber].ruleText = ruleText;
-                    var newNum = generalRules[ruleNumber].ruleNum = ruleNumber;
-                    newText;
-                    newNum;
-                    const embed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`General Rule #${ruleNumber}`,`${ruleText}`);
-                    let embedObjectID = Object.assign({}, embed.fields['0']);
-                    embedObjectID.value = ruleText;
-                    const newEmbed = new Discord.RichEmbed({
-                        color: embed.color,
-                        fields: [embedObjectID],
-                    });
-                    let generalRulesID = generalRules[ruleNumber].messageID;
-                    channel.fetchMessage(generalRulesID).then(message => message.edit(newEmbed));
-                    announcements.send("**NEW RULE**");
-                    announcements.send(newEmbed);
-                });
-                console.log(`${message.author.username} just edited General Rule #${ruleNumber}.`);
-                fs.writeFile("data/generalRules.json", JSON.stringify(generalRules), (err) => {
-                    if (err) console.log(err);
-                });
-                }
-            }
-            if (ruleType === 'event') {
-                message.delete();
-                if (!eventRules[ruleNumber]) eventRules[ruleNumber] = {
-                    ruleText: "",
-                    ruleNum: "",
-                    messageID: "none"
-                };
-                let wRuleText = eventRules[ruleNumber].ruleText;
-                var newText = eventRules[ruleNumber].ruleText = ruleText;
-                var newNum = eventRules[ruleNumber].ruleNum = ruleNumber;
-                newText;
-                newNum;
+  if(!modRole) return message.delete();
 
-                if (eventRules[ruleNumber].messageID === "none") {
-                    const embed = new Discord.RichEmbed()
-                        .setColor(`#76FF33`)
-                        .addField(`Event Rule #${ruleNumber}`, `${ruleText}`);
-                    message.channel.send("Adding a new rule.  This will not appear until !postrules has been ran.");
-                    message.channel.send(embed);
-                    console.log(`${message.author.username} just edited Event Rule #${ruleNumber}.`);
-                    fs.writeFile("data/eventRules.json", JSON.stringify(eventRules), (err) => {
-                    if (err) console.log(err);
-                    });
-                } else {
-                const oldEmbed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`Event Rule #${ruleNumber}`,`${wRuleText}`);                    
-                announcements.send("A change has been made to the rules!");
-                announcements.send("**OLD RULE**");
-                announcements.send(oldEmbed).then(function() {
-                    var newText = eventRules[ruleNumber].ruleText = ruleText;
-                    var newNum = eventRules[ruleNumber].ruleNum = ruleNumber;
-                    newText;
-                    newNum;
-                    const embed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`Event Rule #${ruleNumber}`,`${ruleText}`);
-                    let embedObjectID = Object.assign({}, embed.fields['0']);
-                    embedObjectID.value = ruleText;
-                    const newEmbed = new Discord.RichEmbed({
-                        color: embed.color,
-                        fields: [embedObjectID],
-                    });
-                    let eventRulesID = eventRules[ruleNumber].messageID;
-                    channel.fetchMessage(eventRulesID).then(message => message.edit(newEmbed));
-                    announcements.send("**NEW RULE**");
-                    announcements.send(newEmbed);
-                });
-                console.log(`${message.author.username} just edited Event Rule #${ruleNumber}.`);
-                fs.writeFile("data/eventRules.json", JSON.stringify(eventRules), (err) => {
-                    if (err) console.log(err);
-                });
-                }
-            }
-            if (ruleType === 'promotion') {
-                message.delete();
-                if (!promotionRules[ruleNumber]) promotionRules[ruleNumber] = {
-                    ruleText: "",
-                    ruleNum: "",
-                    rankIcon: "",
-                    rankName: "",
-                    messageID: "none"
-                };
-                let wRuleText = promotionRules[ruleNumber].ruleText;
-                var newText = promotionRules[ruleNumber].ruleText = ruleText;
-                var newNum = promotionRules[ruleNumber].ruleNum = ruleNumber;
-                newText;
-                newNum;
+  let embed = new Discord.MessageEmbed()
+  if (ruleType === "help") {
+      embed.setColor('RED')
+      embed.setTitle('Help: Adding & Editing a Rule')
+      embed.setThumbnail('https://cdn3.iconfinder.com/data/icons/logos-and-brands-adobe/512/91_Discord-512.png')
+      embed.setDescription(`This command will allow you to add and/or edit rules.  If you add a new rule, then you must run \`${config.prefix}postrules\` to update the list.`)
+      embed.addFields(
+        {name:"Examples", value:`${config.prefix}editrule [type] [number] [description]\n${config.prefix}editrule general 3 PM gold star ranks in-game or on Discord for rank promotions`},
+        {name:"Notes:", value:`● [type] is either \`general\`, \`event\`, \`promotion\`, or \`pvm\`\n● Type, number and description must be included on all rules or the command will fail.\n● For Ranks, the [number] is the rank name, i.e. \`${config.prefix}editrule recruit Participate in 5 events to not be a friggin noob.\``}
+      );
+    return message.channel.send(embed);
+  }
+  if (!ruleType || !ruleNumber || !ruleText) {
+    embed.setColor('RED')
+    embed.setTitle('Error:')
+    embed.setDescription(`An error has occured while trying to run your command.  Please check \`${config.prefix}editrule help\` for more information.`)
+  return message.channel.send(embed);
+  }
 
-                if (promotionRules[ruleNumber].messageID === "none") {
-                    const embed = new Discord.RichEmbed()
-                        .setColor(`#76FF33`)
-                        .addField(`${ruleNumber}`, `${ruleText}`);
-                    message.channel.send("Adding a new rule.  This will not appear until !postrules has been ran.");
-                    message.channel.send(embed);
-                    console.log(`${message.author.username} just edited Promotion Rule #${ruleNumber}.`);
-                    fs.writeFile("data/promotionRules.json", JSON.stringify(promotionRules), (err) => {
-                    if (err) console.log(err);
-                    });
-                } else {
-                const oldEmbed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`${ruleNumber}`,`${wRuleText}`);                    
-                announcements.send("A change has been made to the rules!");
-                announcements.send("**OLD RULE**");
-                announcements.send(oldEmbed).then(function() {
-                    var newText = promotionRules[ruleNumber].ruleText = ruleText;
-                    var newNum = promotionRules[ruleNumber].ruleNum = ruleNumber;
-                    newText;
-                    newNum;
-                    const embed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`${ruleNumber}`,`${ruleText}`);
-                    let embedObjectID = Object.assign({}, embed.fields['0']);
-                    embedObjectID.value = ruleText;
-                    const newEmbed = new Discord.RichEmbed({
-                        color: embed.color,
-                        fields: [embedObjectID],
-                    });
-                    let promotionRulesID = promotionRules[ruleNumber].messageID;
-                    channel.fetchMessage(promotionRulesID).then(message => message.edit(newEmbed));
-                    announcements.send("**NEW RULE**");
-                    announcements.send(newEmbed);
-                });
-                console.log(`${message.author.username} just edited Promotion Rule #${ruleNumber}.`);
-                fs.writeFile("data/promotionRules.json", JSON.stringify(promotionRules), (err) => {
-                    if (err) console.log(err);
-                });
-                }
-            }
-            if (ruleType === 'pvm') {
-                message.delete();
-                if (!pvmRules[ruleNumber]) pvmRules[ruleNumber] = {
-                    ruleText: "",
-                    ruleNum: "",
-                    messageID: "none"
-                };
-                let wRuleText = pvmRules[ruleNumber].ruleText;
-                var newText = pvmRules[ruleNumber].ruleText = ruleText;
-                var newNum = pvmRules[ruleNumber].ruleNum = ruleNumber;
-                newText;
-                newNum;
+  let fileName, section, filepath, color;
 
-                if (pvmRules[ruleNumber].messageID === "none") {
-                    const embed = new Discord.RichEmbed()
-                        .setColor(`#76FF33`)
-                        .addField(`PVM Rule #${ruleNumber}`, `${ruleText}`);
-                    message.channel.send("Adding a new rule.  This will not appear until !postrules has been ran.");
-                    message.channel.send(embed);
-                    console.log(`${message.author.username} just edited PVM Rule #${ruleNumber}.`);
-                    fs.writeFile("data/pvmRules.json", JSON.stringify(pvmRules), (err) => {
-                    if (err) console.log(err);
-                    });
-                } else {
-                const oldEmbed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`PVM Rule #${ruleNumber}`,`${wRuleText}`);                    
-                announcements.send("A change has been made to the rules!");
-                announcements.send("**OLD RULE**");
-                announcements.send(oldEmbed).then(function() {
-                    var newText = pvmRules[ruleNumber].ruleText = ruleText;
-                    var newNum = pvmRules[ruleNumber].ruleNum = ruleNumber;
-                    newText;
-                    newNum;
-                    const embed = new Discord.RichEmbed()
-                    .setColor(`#76FF33`)
-                    .addField(`PVM Rule #${ruleNumber}`,`${ruleText}`);
-                    let embedObjectID = Object.assign({}, embed.fields['0']);
-                    embedObjectID.value = ruleText;
-                    const newEmbed = new Discord.RichEmbed({
-                        color: embed.color,
-                        fields: [embedObjectID],
-                    });
-                    let pvmRulesID = pvmRules[ruleNumber].messageID;
-                    channel.fetchMessage(pvmRulesID).then(message => message.edit(newEmbed));
-                    announcements.send("**NEW RULE**");
-                    announcements.send(newEmbed);
-                });
-                console.log(`${message.author.username} just edited PVM Rule #${ruleNumber}.`);
-                fs.writeFile("data/pvmRules.json", JSON.stringify(pvmRules), (err) => {
-                    if (err) console.log(err);
-                });
-                }
-            }
-        }            
+  //color = '#76FF33';
 
+  switch (ruleType) {
+    case 'general':
+      fileName = generalRules;
+      section = 'General';
+      filepath = 'data/generalRules.json';
+      color = '#0099ff';
+    break;
+
+    case 'event':
+      fileName = eventRules;
+      section = 'Event';
+      filepath = 'data/eventRules.json';
+      color = '#76FF33';
+    break;
+
+    case 'promotion':
+      fileName = promotionRules;
+      section = 'Promotion';
+      filepath = 'data/promotionRules.json';
+      color = '#e2f004';
+    break;
+
+    case 'pvm':
+      fileName = pvmRules;
+      section = 'PvM';
+      filepath = 'data/pvmRules.json';
+      color = '#e3801b';
+    break;
+  }
+
+  let oldRuleText;
+
+  if (fileName != promotionRules) {
+    if (!fileName[ruleNumber]) fileName[ruleNumber] = {
+      ruleText: ruleText,
+      ruleNum: ruleNumber,
+      messageID: "none"
     };
+
+    oldRuleText = fileName[ruleNumber].ruleText;
+
+    fileName[ruleNumber] = {
+      ruleText: ruleText,
+      ruleNum: ruleNumber,
+      messageID: fileName[ruleNumber].messageID
+    };
+  } 
+
+  if (fileName == promotionRules) {
+    if (!fileName[ruleNumber]) fileName[ruleNumber] = {
+      ruleText: ruleText,
+      ruleNum: fileName[ruleNumber].ruleNum,
+      messageID: "none"
+    };
+
+    oldRuleText = fileName[ruleNumber].ruleText;
+
+    fileName[ruleNumber] = {
+      ruleText: ruleText,
+      ruleNum: fileName[ruleNumber].ruleNum,
+      messageID: fileName[ruleNumber].messageID
+    };
+  }
+
+
+  if (fileName[ruleNumber].messageID === "none") {
+    const embed = new Discord.MessageEmbed()
+      .setColor(color)
+      .addField(`${section} Rule #${ruleNumber}`, `${ruleText}`);
+
+    message.channel.send(`Adding a new rule.  This will not appear until \`${config.prefix}postrules\` has been ran.`);
+    message.channel.send(embed);
+
+    fs.writeFile(filepath, JSON.stringify(fileName), (err) => {
+      if (err) console.log(err);
+    });
+  } else {
+    if (ruleType != "promotion") {
+      const oldEmbed = new Discord.MessageEmbed()
+        .setColor(color)
+        .addField(`${section} Rule #${ruleNumber}`, `${oldRuleText}`);
+
+      announcements.send("A change has been made to the rules");
+      announcements.send("***OLD RULE***");
+      announcements.send(oldEmbed).then(() => {
+          const embed = new Discord.MessageEmbed()
+            .setColor(color)
+            .addField(`${section} Rule #${ruleNumber}`,`${ruleText}`);
+  
+          let embedObjectID = Object.assign({}, embed.fields['0']);
+          embedObjectID.value = ruleText;
+          const newEmbed = new Discord.MessageEmbed({
+            color: embed.color,
+            fields: [embedObjectID],
+          });
+          let ruleID = fileName[ruleNumber].messageID;
+          rules.messages.fetch(ruleID).then(message => message.edit(newEmbed)).catch(e => console.log(e));
+          announcements.send("**NEW RULE**");
+          announcements.send(newEmbed);
+      });
+    } else {
+      const oldEmbed = new Discord.MessageEmbed()
+        .setColor(color)
+        .addField(promotionRules[ruleNumber].ruleNum, oldRuleText)
+      announcements.send("A change has been made to the rules")
+      announcements.send("***OLD RULE***");
+      announcements.send(oldEmbed).then(() => {
+        const embed = new Discord.MessageEmbed()
+          .setColor(color)
+          .addField(promotionRules[ruleNumber].ruleNum, ruleText);
+        
+        let embedObjectID = Object.assign({}, embed.fields['0']);
+        embedObjectID.value = ruleText;
+        const newEmbed = new Discord.MessageEmbed({
+          color: embed.color,
+          fields: [embedObjectID]
+        });
+        let ruleID = fileName[ruleNumber].messageID;
+        rules.messages.fetch(ruleID).then(message => message.edit(newEmbed)).catch(e => console.log(e));
+        announcements.send("***NEW RULE***");
+        announcements.send(newEmbed);
+      });
+    }
+
+    fs.writeFile(filepath, JSON.stringify(fileName), (err) => {
+      if (err) console.log(err);
+    });
+  }          
+};

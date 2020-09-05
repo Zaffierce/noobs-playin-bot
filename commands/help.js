@@ -3,24 +3,21 @@ const config = require("../config.json");
     
 module.exports.run = async (bot, message, args) => {
 
-    let prefix = config.prefix;
-
-const embed = new Discord.RichEmbed()
+  const embed = new Discord.MessageEmbed()
     .setColor('#33EFFF')
-    .setAuthor('Commands list for Noobs Playin Bot')
-    .addField(`${prefix}addrole`,`Type ${prefix}addrole help for more information.`)
-    .addField(`${prefix}config`,`Type ${prefix}config for more information.  This must be configured first or else the bot will not work.`)
-    .addField(`${prefix}deleterole`,`Deletes roles, type ${prefix}roles to get the full list.`)
-    .addField(`${prefix}editrule`,`Type ${prefix}editrule help for more information.`)
-    .addField(`${prefix}help`,`Displays this menu.`)
-    .addField(`${prefix}postroles`,`Posts the #roles information.  Run this in the #roles channel.`)
-    .addField(`${prefix}postrules`,`Posts the #rule information.  Run this in the #rule channel.`)
-    .addField(`${prefix}prefix`,`Sets the prefix for this bot.`)
-    .addField(`${prefix}roles`,`Displays the current list of roles.`)
-    // .addField(`${prefix}`,`${prefix}`)
-    .addField(`${prefix}prefix`,`Sets the command prefix, recommend setting it to something unique.`)
-
-    .setFooter(`Created by Zaff#6073 - https://github.com/Zaffierce/ - if there are any issues please DM me.`)
-
-    message.channel.send(embed);
+    .setAuthor('Command list for the Noobs Playin Bot')
+    .addFields(
+      {name: `${config.prefix}addrole`, value: `This command allows you to add custom roles.  Type \`${config.prefix}addrole help\` for more information.`},
+      {name: `${config.prefix}config`, value: `This command allows you to configure various settings related to your Discord.  Type \`${config.prefix}config help\` for more information.`},
+      {name: `${config.prefix}deleterole`, value: `This command allows you to delete custom roles.  Type \`${config.prefix}deleterole help\` for more information.`},
+      {name: `${config.prefix}deleterule`, value: `This command allows you to delete rules.  Type \`${config.prefix}deleterule help\` for more information.`},
+      {name: `${config.prefix}editrule`, value: `This command allows you to create or edit new rules.  Type \`${config.prefix}editrule help\` for more information.`},
+      {name: `${config.prefix}help`, value: `This command displays what you are reading currently.`},
+      {name: `${config.prefix}postroles`, value: `This command will post your custom roles to the roles channel.  The roles channel can be configured via \`${config.prefix}config\``},
+      {name: `${config.prefix}postrules`, value: `This command will post your rules to the rules channel.  The rules channel can be configured via \`${config.prefix}config\``},
+      {name: `${config.prefix}prefix`, value: `This command will set the prefix of the bot.  Currently the prefix is \`${config.prefix}\``},
+      {name: `${config.prefix}roles`, value: `This command will output all existing roles making it easy to delete them.`}
+      )
+    .setFooter(`Created by Zaff#6073 - https://github.com/zaffierce/noobs-playin-bot - If there are any issues, please shoot me a DM.`)
+    return message.channel.send(embed);
 };

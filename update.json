@@ -1,1 +1,7 @@
-{"roles":{"channelID":"583788326620758026"},"norank":{"roleName":"nobody"},"rules":{"channelID":"583878434908798986"},"announcements":{"channelID":"583889888232079360"}}
+{
+    "prefix":"!np",
+    "roles":{"channelID":"583788326620758026"},
+    "norank":{"roleName":"nobody"},
+    "rules":{"channelID":"583878434908798986"},
+    "announcements":{"channelID":"583889888232079360"}
+}
