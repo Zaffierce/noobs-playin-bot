@@ -11,9 +11,6 @@ module.exports.run = async (bot, message, args) => {
 
   let greeting_msg = message.content.split(' ').splice(1).join(' ')
 
-  // message.content.split(' ').splice(3).join(' ');
-  // console.log(message.content.split(' ').splice(1).join(' '))
-
   if (!greeting_msg) {
     embed.setColor('RED')
     embed.setTitle('Error:')
