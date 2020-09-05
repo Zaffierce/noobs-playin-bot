@@ -19,7 +19,7 @@ module.exports.run = async (bot, message, args) => {
       embed.setDescription('This command explains how to update the configurations for the bot.')
       embed.addFields(
         {name:"Example", value:`${config.prefix}config [type] [data]\n${config.prefix}config roles #roles\n${config.prefix}config guestrank @guest\n${config.prefix}config list`},
-        {name:"Notes:", value:"● [type] is either `roles`, `rules`, `announcements`, `nickname`, `guest`, or `member`\n● If the guest rank and/or member rank is not @-able, you'll have to fetch the group's ID instead by doing `\\@guest` and then enter that instead."}
+        {name:"Notes:", value:"● [type] is either `roles`, `rules`, `announcements`, `welcome`, `nickname`, `guest`, or `member`\n● If the guest rank and/or member rank is not @-able, you'll have to fetch the group's ID instead by doing `\\@guest` and then enter that instead."}
       );
       fs.writeFile('config.json', JSON.stringify(config), (err) => {
         if (err) console.log(err);
@@ -44,6 +44,17 @@ module.exports.run = async (bot, message, args) => {
       else (!config.announcements_channel_ID)
         config.announcements_channel_ID = data.replace(/\D/g,'')
       embed.setDescription(`Announcement Channel:  ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
+
+    case 'welcome':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.welcome_channel_ID === data) message.channel.send('An error has occured while trying to run your command.  The existing channel ID matches the inputted ID.');
+      else (!config.welcome_channel_ID)
+        config.welcome_channel_ID = data.replace(/\D/g,'')
+      embed.setDescription(`Welcome Channel:  ${data}`);
       fs.writeFile('config.json', JSON.stringify(config), (err) => {
         if (err) console.log(err);
       });
@@ -100,6 +111,7 @@ module.exports.run = async (bot, message, args) => {
         {name:"Announcements Channel", value:`<#${config.announcements_channel_ID}>`},
         {name:"Rules Channel", value:`<#${config.rules_channel_ID}>`},
         {name:"Nickname Channel", value:`<#${config.nickname_channel_ID}>`},
+        {name:"Welcome Channel", value:`<#${config.welcome_channel_ID}>`},
         {name:"Guest rank name", value:`<@&${config.guest_rank}>`},
         {name:"Member rank name", value:`<@&${config.member_rank}>`}
       );

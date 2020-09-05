@@ -94,6 +94,10 @@ bot.on("message", message => {
 bot.on('guildMemberAdd', (guildMember) => {
   let role = guildMember.guild.roles.cache.find(r => r.id === config.guest_rank);
   guildMember.roles.add(role);
+
+  let greeting = config.greeting;
+  let modified_greeting = greeting.replace("${user}", `<@${guildMember.id}>`).replace("${server}", `**${guildMember.guild.name}**`)
+  bot.channels.cache.get(config.welcome_channel_ID).send(modified_greeting);
 });
 
 bot.on('error', console.error);
