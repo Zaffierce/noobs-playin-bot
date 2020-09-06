@@ -97,7 +97,9 @@ bot.on('guildMemberAdd', (guildMember) => {
 
   let greeting = config.greeting;
   let modified_greeting = greeting.replace("${user}", `<@${guildMember.id}>`).replace("${server}", `**${guildMember.guild.name}**`)
-  bot.channels.cache.get(config.welcome_channel_ID).send(modified_greeting);
+  setTimeout(() => {
+    bot.channels.cache.get(config.welcome_channel_ID).send(modified_greeting);
+  }, 2000);
 });
 
 bot.on('error', console.error);
