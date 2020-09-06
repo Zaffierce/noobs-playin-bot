@@ -20,9 +20,6 @@ module.exports.run = async (bot, message, args) => {
       messagesArr[i].delete();
     }
   }).then(() => {
-    const blankEmbed = new Discord.MessageEmbed()
-      .setColor('#000000')
-      .addField('\u200b', '\u200b');
     const rulesHeaderEmbed = new Discord.MessageEmbed()
       .setColor('#0099ff')
       .setTitle('Noobs Playin Rules')
@@ -41,7 +38,6 @@ module.exports.run = async (bot, message, args) => {
         });
       });
     }
-    rules_channel.send(blankEmbed);
     for (i in eventRules) {
       let event = eventRules[i]
       const eventRulesEmbed = new Discord.MessageEmbed()
@@ -54,7 +50,6 @@ module.exports.run = async (bot, message, args) => {
         });
       });
     }
-    rules_channel.send(blankEmbed);
     for (i in promotionRules) {
       let promotion = promotionRules[i];
       const ranksEmbed = new Discord.MessageEmbed()
@@ -67,7 +62,6 @@ module.exports.run = async (bot, message, args) => {
         });
       });
     }
-    rules_channel.send(blankEmbed);
     for (i in pvmRules) {
       let pvm = pvmRules[i];
       const pvmRulesEmbed = new Discord.MessageEmbed()
