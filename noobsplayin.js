@@ -86,6 +86,17 @@ bot.on("message", message => {
     if (cmd) cmd.run(bot, message, args);
   }
   if (message.channel.id == config.nickname_channel_ID && message.author.id != bot.user.id) {
+    const user = message.guild.members.cache.get(message.author.id);
+    const previousName = user.nickname;
+    const embed = new Discord.MessageEmbed()
+    embed.setColor('#76FF33')
+    embed.setTitle('Nickname Update:')
+    embed.setDescription(`<@${message.author.id}> has updated their nickname`)
+    embed.addFields(
+      {name: "OLD", value: previousName ? previousName : "-", inline: true},
+      {name: "NEW", value: message.content, inline: true},
+      )
+    bot.channels.cache.get(config.nickname_history_channel_ID).send(embed);
     message.guild.members.cache.get(message.author.id).setNickname(message.content);
     message.channel.send(`You've successfully set your RSN to: <@${message.author.id}>`).then(d_msg => d_msg.delete({timeout: 60000}));
   }  
@@ -94,7 +105,6 @@ bot.on("message", message => {
 bot.on('guildMemberAdd', (guildMember) => {
   let role = guildMember.guild.roles.cache.find(r => r.id === config.guest_rank);
   guildMember.roles.add(role);
-
   let greeting = config.greeting;
   let modified_greeting = greeting.replace("${user}", `<@${guildMember.id}>`).replace("${server}", `**${guildMember.guild.name}**`)
   setTimeout(() => {
