@@ -103,13 +103,19 @@ bot.on("message", message => {
 });
 
 bot.on('guildMemberAdd', (guildMember) => {
-  let role = guildMember.guild.roles.cache.find(r => r.id === config.guest_rank);
-  guildMember.roles.add(role);
-  let greeting = config.greeting;
-  let modified_greeting = greeting.replace("${user}", `<@${guildMember.id}>`).replace("${server}", `**${guildMember.guild.name}**`)
-  setTimeout(() => {
-    bot.channels.cache.get(config.welcome_channel_ID).send(modified_greeting);
-  }, 2000);
+  if (guildMember.guild.id === bot.guilds.cache.get(config.guild_ID).id) {
+    let role = guildMember.guild.roles.cache.find(r => r.id === config.guest_rank);
+    guildMember.roles.add(role);
+    let greeting = config.greeting;
+    let modified_greeting = greeting.replace("${user}", `<@${guildMember.id}>`).replace("${server}", `**${guildMember.guild.name}**`)
+    setTimeout(() => {
+      bot.channels.cache.get(config.welcome_channel_ID).send(modified_greeting);
+    }, 2000);
+  }
+});
+
+bot.on('guildMemberRemove', (guildMember) => {
+  console.log(guildMember);
 });
 
 bot.on('error', console.error);
