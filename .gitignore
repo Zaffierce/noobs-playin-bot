@@ -1,7 +1,7 @@
 #Custom
 backups/
 config.json
-data/
+data/*
 
 
 # Created by https://www.gitignore.io/api/node,macos,linux,windows,webstorm,visualstudiocode
