@@ -95,7 +95,7 @@ bot.on("message", message => {
     embed.addFields(
       {name: "OLD", value: previousName ? previousName : "-", inline: true},
       {name: "NEW", value: message.content, inline: true},
-      )
+    )
     bot.channels.cache.get(config.nickname_history_channel_ID).send(embed);
     message.guild.members.cache.get(message.author.id).setNickname(message.content);
     message.channel.send(`You've successfully set your RSN to: <@${message.author.id}>`).then(d_msg => d_msg.delete({timeout: 60000}));
@@ -115,7 +115,17 @@ bot.on('guildMemberAdd', (guildMember) => {
 });
 
 bot.on('guildMemberRemove', (guildMember) => {
-  console.log(guildMember);
+  if (guildMember.guild.id === bot.guilds.cache.get(config.guild_ID).id) {
+    const embed = new Discord.MessageEmbed()
+    embed.setColor('RED')
+    embed.setTitle('Discord Update')
+    embed.setDescription(`<@${guildMember.user.id}> has left this Discord.`)
+    embed.addFields(
+      {name: "Discord ID:", value: `${guildMember.user.username}#${guildMember.user.discriminator}`, inline: true},
+      {name: "Nickname:", value: guildMember.nickname ? guildMember.nickname : "-", inline: true}
+    )
+    bot.channels.cache.get(config.leave_channel_ID).send(embed);    
+  }
 });
 
 bot.on('error', console.error);
