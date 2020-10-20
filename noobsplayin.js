@@ -45,17 +45,23 @@ bot.on("raw", async (event) => {
   let reaction = message.reactions.cache.get(emojiKey);
   
 	if (!reaction) {
-		const emoji = new Discord.Emoji(bot.guilds.cache.get(data.guild_id), data.emoji);
-		reaction = new Discord.MessageReaction(message, emoji, 1, data.user_id === bot.user.id);
+    const emoji = new Discord.Emoji(bot.guilds.cache.get(data.guild_id), data.emoji);
+    try {
+      reaction = new Discord.MessageReaction(message, emoji, 1, data.user_id === bot.user.id);
+    } catch(e) {
+      console.log(e);
+    }
   }
   if (member.id !== bot.user.id) {
     if (message.channel.id == config.roles_channel_ID) {
-      let role = message.guild.roles.cache.find(r => r.name === roles[reaction.emoji.name].roleName);
-      if (event.t === "MESSAGE_REACTION_ADD") {
-        member.roles.add(role);
-      }
-      if (event.t === "MESSAGE_REACTION_REMOVE") {
-        member.roles.remove(role);
+      try {
+        let role = message.guild.roles.cache.find(r => r.name === roles[reaction.emoji.name].roleName);
+        if (event.t === "MESSAGE_REACTION_ADD") return member.roles.add(role);
+        if (event.t === "MESSAGE_REACTION_REMOVE") return member.roles.remove(role);
+      } catch {
+        let roleCatch = message.guild.roles.cache.find(r => r.name === reaction.emoji.name);
+        if (event.t === "MESSAGE_REACTION_ADD") return member.roles.add(roleCatch);
+        if (event.t === "MESSAGE_REACTION_REMOVE") return member.roles.remove(roleCatch);
       }
     }
     if (message.channel.id == config.rules_channel_ID) {
