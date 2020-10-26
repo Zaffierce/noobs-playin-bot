@@ -103,6 +103,17 @@ module.exports.run = async (bot, message, args) => {
         if (err) console.log(err);
       });
     break;
+
+    case 'rw_check':
+      if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
+      if (config.nickname_history_channel_ID === data) message.channel.send('An error has occured while trying to run your command.  TThe existing channel ID matches the inputted ID.');
+      else (!config.rw_check_channel_ID)
+        config.rw_check_channel_ID = data.replace(/\D/g,'')
+      embed.setDescription(`Runewatch Check Channel: ${data}`);
+      fs.writeFile('config.json', JSON.stringify(config), (err) => {
+        if (err) console.log(err);
+      });
+    break;
         
     case 'guest':
       if (!data) return message.channel.send('An error has occured while trying to run your command.  Please check that you are including the [data] object.');
@@ -136,6 +147,7 @@ module.exports.run = async (bot, message, args) => {
         {name:"Nickname History Channel", value:`<#${config.nickname_history_channel_ID}>`},
         {name:"Welcome Channel", value:`<#${config.welcome_channel_ID}>`},
         {name:"Leave Channel", value:`<#${config.leave_channel_ID}>`},
+        {name:"Runewatch Check", value:`<#${config.rw_check_channel_ID}>`},
         {name:"Guest rank name", value:`<@&${config.guest_rank}>`},
         {name:"Member rank name", value:`<@&${config.member_rank}>`}
       );
