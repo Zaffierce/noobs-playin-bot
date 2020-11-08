@@ -64,20 +64,24 @@ bot.on("raw", async (event) => {
         if (event.t === "MESSAGE_REACTION_REMOVE") return member.roles.remove(roleCatch);
       }
     }
-    if (message.channel.id == config.rules_channel_ID) {
-      let noobRank = message.guild.roles.cache.find(r => r.id  === config.member_rank);
-      let noRank = message.guild.roles.cache.find(r => r.id === config.guest_rank)
-      if (event.t === "MESSAGE_REACTION_ADD" && emojiKey == '✅') {
-        member.roles.add(noobRank);
-        member.roles.remove(noRank)
-        setTimeout(function() {
-          bot.channels.cache.get(config.nickname_channel_ID).send(`<@${member.id}>, please send your RSN to this channel to update your Discord nickname.`).then(d_msg => d_msg.delete({timeout: 60000}));
-        }, 2000);
+    try {
+      if (message.channel.id == config.rules_channel_ID) {
+        let noobRank = message.guild.roles.cache.find(r => r.id  === config.member_rank);
+        let noRank = message.guild.roles.cache.find(r => r.id === config.guest_rank)
+        if (event.t === "MESSAGE_REACTION_ADD" && emojiKey == '✅') {
+          member.roles.add(noobRank);
+          member.roles.remove(noRank)
+          setTimeout(function() {
+            bot.channels.cache.get(config.nickname_channel_ID).send(`<@${member.id}>, please send your RSN to this channel to update your Discord nickname.`).then(d_msg => d_msg.delete({timeout: 60000}));
+          }, 2000);
+        }
+        if (event.t === "MESSAGE_REACTION_REMOVE") {
+          member.roles.remove(noobRank);
+          member.roles.add(noRank);
+        }
       }
-      if (event.t === "MESSAGE_REACTION_REMOVE") {
-        member.roles.remove(noobRank);
-        member.roles.add(noRank);
-      }
+    } catch(e) {
+      bot.channels.cache.get('594259239552417793').send('<@143840467312836609>, ```'+e+'```');
     }
   }
 	bot.emit(events[event.t], reaction, user);
@@ -91,22 +95,26 @@ bot.on("message", message => {
     var cmd = bot.commands.get(cont[0]);
     if (cmd) cmd.run(bot, message, args);
   }
-  if (message.channel.id == config.nickname_channel_ID && message.author.id != bot.user.id) {
-    const user = message.guild.members.cache.get(message.author.id);
-    const previousName = user.nickname;
-    const embed = new Discord.MessageEmbed()
-    embed.setColor('#76FF33')
-    embed.setTitle('Nickname Update:')
-    embed.setDescription(`<@${message.author.id}> has updated their nickname`)
-    embed.addFields(
-      {name: "OLD", value: previousName ? previousName : "-", inline: true},
-      {name: "NEW", value: message.content, inline: true},
-    )
-    bot.channels.cache.get(config.nickname_history_channel_ID).send(embed);
-    message.guild.members.cache.get(message.author.id).setNickname(message.content);
-    message.channel.send(`You've successfully set your RSN to: <@${message.author.id}>`).then(d_msg => d_msg.delete({timeout: 60000}));
-    bot.channels.cache.get(config.rw_check_channel_ID).send(`!rw ${message.content}`);
-  }  
+  try {
+    if (message.channel.id == config.nickname_channel_ID && message.author.id != bot.user.id) {
+      const user = message.guild.members.cache.get(message.author.id);
+      const previousName = user.nickname;
+      const embed = new Discord.MessageEmbed()
+      embed.setColor('#76FF33')
+      embed.setTitle('Nickname Update:')
+      embed.setDescription(`<@${message.author.id}> has updated their nickname`)
+      embed.addFields(
+        {name: "OLD", value: previousName ? previousName : "-", inline: true},
+        {name: "NEW", value: message.content, inline: true},
+      )
+      bot.channels.cache.get(config.nickname_history_channel_ID).send(embed);
+      message.guild.members.cache.get(message.author.id).setNickname(message.content);
+      message.channel.send(`You've successfully set your RSN to: <@${message.author.id}>`).then(d_msg => d_msg.delete({timeout: 60000}));
+      bot.channels.cache.get(config.rw_check_channel_ID).send(`!rw ${message.content}`);
+    }  
+  } catch(e) {
+    bot.channels.cache.get('594259239552417793').send('<@143840467312836609>, ```'+e+'```');
+  }
 });
 
 bot.on('guildMemberAdd', (guildMember) => {
