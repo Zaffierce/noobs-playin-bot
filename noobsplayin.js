@@ -110,7 +110,7 @@ bot.on("message", message => {
       bot.channels.cache.get(config.nickname_history_channel_ID).send(embed);
       message.guild.members.cache.get(message.author.id).setNickname(message.content);
       message.channel.send(`You've successfully set your RSN to: <@${message.author.id}>`).then(d_msg => d_msg.delete({timeout: 60000}));
-      bot.channels.cache.get(config.rw_check_channel_ID).send(`!rw ${message.content}`);
+      // bot.channels.cache.get(config.rw_check_channel_ID).send(`!rw ${message.content}`);
     }  
   } catch(e) {
     bot.channels.cache.get('594259239552417793').send('<@143840467312836609>, ```'+e+'```');
